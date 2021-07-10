@@ -94,7 +94,9 @@ class Admin_paypPayPalPlusOrder_List extends Admin_paypPayPalPlusOrder_List_pare
             LEFT JOIN payppaypalpluspui ON payppaypalpluspui.OXPAYMENTID = payppaypalpluspayment.OXPAYMENTID
         ";
 
-        $sSql = str_replace('from oxorder', $sQ, $sSql);
+        $unquoted = 'oxorder';
+        $quoted = oxDb::getDb()->quoteIdentifier('oxorder');
+        $sSql = preg_replace("/\bfrom\s+(?:\b$unquoted\b|$quoted)/i", $sQ, $sSql);
 
         return $sSql;
     }
@@ -114,7 +116,7 @@ class Admin_paypPayPalPlusOrder_List extends Admin_paypPayPalPlusOrder_List_pare
         $aSorting = parent::getListSorting();
         if ($aSorting['oxorder']['oxpaymenttype']) {
             $sQ = ' ORDER BY payments_oxdesc, IF(ISNULL(payppaypalpluspui_oxid), 0, 1), oxorder.oxbillnr, ';
-            $sSql = str_replace('order by ', $sQ, $sSql);
+            $sSql = str_ireplace('order by ', $sQ, $sSql);
         }
 
         return $sSql;
